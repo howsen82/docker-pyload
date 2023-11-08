@@ -1,0 +1,24 @@
+version: '3.9'
+
+services:
+  pyload:
+    container_name: pyload
+    image: ghcr.io/linuxserver/pyload-ng:latest
+    hostname: pyload
+    environment:
+      TZ: Asia/Kuching
+      PUID: 1026
+      PGID: 100
+    ports:
+      - 9555:8000  # HTTP access
+      - 9666:9666  # Click'n'Load port
+    mem_limit: 4g
+    cpu_shares: 768
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:8000
+    volumes:
+      - /data/pyload/config:/config:rw
+      - /data/pyload/downloads:/downloads:rw
+    restart: on-failure:5
